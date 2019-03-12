@@ -122,9 +122,17 @@ public class JDBCAuthenticationProviderService implements AuthenticationProvider
         }
         
         // If no user account is found, and database-specific account
-        // restrictions do not apply, get an empty user.
+        // restrictions do not apply...
         else if (!databaseRestrictionsApplicable) {
-            user = userService.retrieveSkeletonUser(authenticationProvider, authenticatedUser);
+            
+            // If auto-create is enabled, create the account.
+            if (environment.autoCreateAbsentAccounts())
+                user = userService.createMissingUser(authenticationProvider, authenticatedUser);
+            
+            // Otherwise set up a skeleton user.
+            else
+                user = userService.retrieveSkeletonUser(authenticationProvider, authenticatedUser);
+            
         }
 
         // Veto authentication result only if database-specific account

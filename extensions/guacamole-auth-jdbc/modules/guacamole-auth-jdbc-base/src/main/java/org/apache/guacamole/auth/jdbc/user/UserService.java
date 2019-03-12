@@ -401,25 +401,25 @@ public class UserService extends ModeledDirectoryObjectService<ModeledUser, User
      */
     public ModeledUser retrieveUser(AuthenticationProvider authenticationProvider,
             AuthenticatedUser authenticatedUser) throws GuacamoleException {
+        
+        if (authenticatedUser == null)
+            throw new GuacamoleSecurityException("Authentication without an authenticated user.");
 
         // If we already queried this user, return that rather than querying again
         if (authenticatedUser instanceof ModeledAuthenticatedUser)
             return ((ModeledAuthenticatedUser) authenticatedUser).getUser();
 
-        // Get username
-        String username = authenticatedUser.getIdentifier();
-
         // Retrieve corresponding user model, if such a user exists
-        UserModel userModel = userMapper.selectOne(username);
+        UserModel userModel = userMapper.selectOne(authenticatedUser.getIdentifier());
         if (userModel == null)
             return null;
-
+        
         // Create corresponding user object, set up cyclic reference
         ModeledUser user = getObjectInstance(null, userModel);
         user.setCurrentUser(new ModeledAuthenticatedUser(authenticatedUser,
                 authenticationProvider, user));
 
-        // Return already-authenticated user
+        // Return the user
         return user;
 
     }
@@ -459,6 +459,47 @@ public class UserService extends ModeledDirectoryObjectService<ModeledUser, User
         // Return the new user.
         return user;
         
+    }
+    
+    /**
+     * Create a user in the database that does not already exist, setting up an
+     * empty model and inserting both the entity and the user object, and
+     * generating a random password for the account.
+     * 
+     * @param authenticationProvider
+     *     The authentication provider that authenticated the user.
+     * 
+     * @param authenticatedUser
+     *     The authenticated user that is being added to the database.
+     * 
+     * @return
+     *     The ModeledUser associated with the newly-created database object
+     *     for the user.
+     * 
+     * @throws GuacamoleException
+     *     If a ModeledUser cannot be created, or if the user cannot be
+     *     inserted into the database.
+     */
+    public ModeledUser createMissingUser(AuthenticationProvider authenticationProvider,
+            AuthenticatedUser authenticatedUser) throws GuacamoleException {
+        
+        ModeledUser user = getObjectInstance(null,
+                new UserModel(authenticatedUser.getIdentifier()));
+        
+        // Insert the database object
+        entityMapper.insert(user.getModel());
+            
+        // Auto-generate a password
+        user.setPassword(null);
+            
+        // Set up cyclic reference
+        user.setCurrentUser(new ModeledAuthenticatedUser(authenticatedUser,
+            authenticationProvider, user));
+            
+        // Insert the user object
+        userMapper.insert(user.getModel());
+        
+        return user;
     }
 
     /**
@@ -549,7 +590,7 @@ public class UserService extends ModeledDirectoryObjectService<ModeledUser, User
     protected List<ActivityRecord> getObjectInstances(List<ActivityRecordModel> models) {
 
         // Create new list of records by manually converting each model
-        List<ActivityRecord> objects = new ArrayList<ActivityRecord>(models.size());
+        List<ActivityRecord> objects = new ArrayList<>(models.size());
         for (ActivityRecordModel model : models)
             objects.add(getObjectInstance(model));
 
