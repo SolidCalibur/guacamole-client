@@ -70,12 +70,14 @@ angular.module('prompt').factory('guacPrompt', ['$injector',
      *     The prompt to show.
      */
     service.showPrompt = function showPrompt(prompt) {
+        $log.debug('>>>PROMPT<<< Showing prompt ' + JSON.stringify(prompt, null, 2));
         if (!storedPrompt() || !prompt)
             storedPrompt(prompt);
     };
 
     // Hide prompt upon navigation
     $rootScope.$on('$routeChangeSuccess', function() {
+        $log.debug('>>>PROMPT<<< Route changed, hiding prompt.');
         service.showPrompt(false);
     });
 

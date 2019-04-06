@@ -68,7 +68,7 @@ angular.module('prompt').directive('guacPrompt', [function guacPrompt() {
             };
             
             // Update responses as model changes
-            $scope.$watch('prompt.responses', function setModel(model) {
+            $scope.$watch('responses', function setModel(model) {
                 
                 // If model is defined, use it.
                 if (model)

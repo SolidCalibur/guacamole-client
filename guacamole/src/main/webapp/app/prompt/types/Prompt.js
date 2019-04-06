@@ -56,6 +56,13 @@ angular.module('prompt').factory('Prompt', [function definePrompt() {
          * @type TranslatableMessage
          */
         this.text = template.text;
+        
+        /**
+         * The parameters to prompt for.
+         * 
+         * @type Field[]
+         */
+        this.parameters = template.parameters;
 
         /**
          * An array of all actions available to the user in response to this

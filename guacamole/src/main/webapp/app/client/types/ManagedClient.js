@@ -534,7 +534,6 @@ angular.module('client').factory('ManagedClient', ['$rootScope', '$injector',
             $log.debug('>>>PROMPT<<< Received prompt for parameter ' + parameter);
             
             getProtocolInfo.then(function gotProtocolInfo(protocolInfo) {
-                $log.debug('>>>PROMPT<<< Protocol data: ' + JSON.stringify(protocolInfo, null, 2));
                 
                 var protocol = protocolInfo.name;
                 
