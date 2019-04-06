@@ -535,8 +535,6 @@ angular.module('client').factory('ManagedClient', ['$rootScope', '$injector',
             
             getProtocolInfo.then(function gotProtocolInfo(protocolInfo) {
                 
-                var protocol = protocolInfo.name;
-                
                 var promptField = {
                     'name' : parameter,
                     'type' : 'TEXT'
@@ -561,7 +559,6 @@ angular.module('client').factory('ManagedClient', ['$rootScope', '$injector',
                     'text': {
                         'key': 'CLIENT.REQUIRED_INFORMATION_MISSING'
                     },
-                    'protocol' : protocol,
                     'parameters': [
                         promptField
                     ],
