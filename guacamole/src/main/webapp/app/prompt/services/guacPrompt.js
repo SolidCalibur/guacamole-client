@@ -74,6 +74,24 @@ angular.module('prompt').factory('guacPrompt', ['$injector',
         if (!storedPrompt() || !prompt)
             storedPrompt(prompt);
     };
+    
+    /**
+     * Method to stop event propagation.
+     * 
+     * @param event
+     *     The event to prevent.
+     */
+    var preventEvent = function preventEvent(event) {
+        if (service.getPrompt())
+            event.stopPropagation();
+    };
+    
+    /* Add handlers to stop event propagation when prompt is present. */
+    $window.addEventListener('input', preventEvent, true);
+    $window.addEventListener('keydown', preventEvent, true);
+    $window.addEventListener('keypress', preventEvent, true);
+    $window.addEventListener('keyup', preventEvent, true);
+    $window.addEventListener('click', preventEvent, true);
 
     // Hide prompt upon navigation
     $rootScope.$on('$routeChangeSuccess', function() {
