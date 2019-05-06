@@ -182,6 +182,12 @@ public class SQLServerGuacamoleProperties {
 
     };
     
+    /**
+     * Whether or not accounts that are missing from SQL Server but are logged
+     * in successfully from another extension will be automatically created
+     * in the SQL Server database.  True if accounts will be created, otherwise
+     * false.
+     */
     public static final BooleanGuacamoleProperty SQLSERVER_AUTO_CREATE_ACCOUNTS =
             new BooleanGuacamoleProperty() {
     

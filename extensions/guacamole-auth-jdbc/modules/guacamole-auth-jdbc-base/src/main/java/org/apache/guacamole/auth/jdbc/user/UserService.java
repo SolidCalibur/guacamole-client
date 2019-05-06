@@ -401,9 +401,6 @@ public class UserService extends ModeledDirectoryObjectService<ModeledUser, User
      */
     public ModeledUser retrieveUser(AuthenticationProvider authenticationProvider,
             AuthenticatedUser authenticatedUser) throws GuacamoleException {
-        
-        if (authenticatedUser == null)
-            throw new GuacamoleSecurityException("Authentication without an authenticated user.");
 
         // If we already queried this user, return that rather than querying again
         if (authenticatedUser instanceof ModeledAuthenticatedUser)
@@ -497,6 +494,7 @@ public class UserService extends ModeledDirectoryObjectService<ModeledUser, User
             authenticationProvider, user));
             
         // Insert the user object
+        super.createObject(user, user);
         userMapper.insert(user.getModel());
         
         return user;
